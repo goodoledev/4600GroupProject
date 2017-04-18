@@ -34,30 +34,78 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
       
         // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        entrance = new Room("the entrance to to a poorly lit cavern");
+        left1 = new Room("left to the entrance");
+        left2 = new Room("north of left 1");
+        left3 = new Room("north of left 2");
+        portalLeft = new Room("You hear a strange humming noise");
+        mid1 = new Room("north of the entrance");
+        mid2 = new Room("north of mid1");
+        mid3 = new Room("north of mid2");
+        mid4 = new Room("north of mid3");
+        
+        right1 = new Room("in a lecture theater");
+        right2 = new Room("in the campus pub");
+        right3 = new Room("in a computing lab");
+        
+        farRight1 = new Room("in the computing admin office");
+        farRight2 = new Room("north of farRight1");
+        
+        exit = new Room("Finally the exit");
         
         // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
+        
+        entrance.setExit("north", mid1);
+        
+        
+        mid1.setExit("north", mid2);
+        mid1.setExit("east", right1);
+        
+        mid2.setExit("north", mid3);
+        mid2.setExit("west", left2);
+        mid2.setExit("south",mid1);
+        
+        mid3.setExit("north", mid4);
+        mid3.setExit("south",mid2);
+        
+        mid4.setExit("south", mid3);
+        
 
-        theater.setExit("west", outside);
+        left1.setExit("north", left2);
+        
 
-        pub.setExit("east", outside);
+        left2.setExit("east", mid2);
+        left2.setExit("north", left3);
+        left2.setExit("south",left1);
+        
+        left3.setExit("south", left2);
+        left3.setExit("west", portalLeft);
+        
+        portalLeft.setExit("portal", farRight1);
+        portalLeft.setExit("west", left3);
+        
+        right1.setExit("north",right2);
+        right1.setExit("west", mid1);
+        right1.setExit("east", farRight1);
+        
+        right2.setExit("north", right3);
+        right2.setExit("south", right1);
+        
+        right3.setExit("west", mid3);
+        right3.setExit("south", right2);
+        
+        farRight1.setExit("west", right1);
+        
+        farRight2.setExit("west", right2);
+        farRight2.setExit("north", exit);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
 
-        office.setExit("west", lab);
+        exit.setExit("north", exit);
 
-        currentRoom = outside;  // start game outside
+        currentRoom = entrance;  // start game at entrance
     }
 
     /**
