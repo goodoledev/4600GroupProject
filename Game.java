@@ -58,6 +58,7 @@ public class Game
         exit = new Room("Finally the exit");
 
         // initialise room exits
+ master
 
         entrance.setExit("north", mid1);
 
@@ -100,6 +101,7 @@ public class Game
         farRight2.setExit("north", exit);
 
         exit.setExit("north", exit);
+
         currentRoom = entrance;  // start game at entrance
     }
 
