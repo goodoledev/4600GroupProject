@@ -58,7 +58,7 @@ public class Game
         exit = new Room("Finally the exit");
 
         // initialise room exits
- master
+
 
         entrance.setExit("north", mid1);
 
