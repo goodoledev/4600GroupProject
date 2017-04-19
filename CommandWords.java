@@ -13,8 +13,8 @@ public class CommandWords
 {
     // a constant array that holds all valid command words
     private static final String[] validCommands = {
-        "go", "quit", "help"
-    };
+            "go", "quit", "help", "north", "south", "east","west"
+        };
 
     /**
      * Constructor - initialise the command words.
@@ -32,7 +32,7 @@ public class CommandWords
     {
         for(int i = 0; i < validCommands.length; i++) {
             if(validCommands[i].equals(aString))
-                return true;
+              return true;
         }
         // if we get here, the string was not found in the commands
         return false;
