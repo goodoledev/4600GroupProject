@@ -35,69 +35,76 @@ public class Game
      */
     private void createRooms()
     {
-        Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
-        
+       Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
+              
         // create the rooms
-        entrance = new Room("in the entrance to a poorly lit cavern");
-        left1 = new Room("left to the entrance");
-        left2 = new Room("north of left 1");
-        left3 = new Room("north of left 2");
-        portalLeft = new Room("You hear a strange humming noise");
-        mid1 = new Room("north of the entrance");
-        mid2 = new Room("north of mid1");
-        mid3 = new Room("north of mid2");
-        mid4 = new Room("north of mid3");
-
-        right1 = new Room("in a lecture theater");
-        right2 = new Room("in the campus pub");
-        right3 = new Room("in a computing lab");
-
-        farRight1 = new Room("in the computing admin office");
-        farRight2 = new Room("north of farRight1");
-
-        exit = new Room("Finally the exit");
-
+        entrance = new Room("You find yourself at the entrance to to a poorly lit cavern.","Enter the dungeon, true Adventure awaits!");
+        left1 = new Room("A roaring blaze blocks your path!","The flame illuminates the path from which you came.");
+        left2 = new Room("A skeleton lies on the floor, fear grips you. Tread carefully.", "You notice the skeleton seems like he was trying to travel North...");
+        left3 = new Room("Beautiful mounds of gold flash before your eyes! You step closer and then everything vanishes...","Fools have perished here, you can feel it. But something urges you to press on...");
+        portalLeft = new Room("You hear a strange humming noise and what looks to be a portal. Where does it lead?","A voice tells you, 'do not confuse the fear of the unknown with the fear of change...'");
+        mid1 = new Room("Darkness washes over you.","Do not fear, moving forward will lead to progress.");
+        mid2 = new Room("BATS rush in and swarm you! 2 doors are outlined in the distance, make a decision quickly!","Strange noises flood in from the West.");
+        mid3 = new Room("Eerie silence deafens you... ","You notice a strange mural of a Sun to the east. When you move closer to the mural sounds of water come from the North");
+        mid4 = new Room("Water flows in from the ceiling into a small underground creek.","You seem to have found a dead end. What went wrong? Try retracing your steps");
+        
+        right1 = new Room("There's a sad subtle crying noise nearby...","Do you wish to follow the noise? Choose wisely...");
+        right2 = new Room("You see a trail of Egyptian Scarab Beetles swarming over the remains of an adventurer on the east side of the wall","The Egyptian considered these beetles lucky, do you wish to follow the trail?");
+        right3 = new Room("An intense cold blankets the room, you feel your breath catch in your chest. In the corner a dark figure catches your eye...","Fear seems to empower the figure, but faint barking of what sounds like an old friend echo from the southern side of the room...");
+        
+        farRight1 = new Room("There's a little girl crying in the corner of the room...","There's blood flowing down her eyes as she yells TURN BACK!!!");
+        farRight2 = new Room("You find yourself in a place dark, but you feel invigorated. Nothing can stop you now.",
+        "Faint markings on the north wall depict an image of a phoenix rising from the ashes. What does it mean?");
+        
+        exit = new Room("Light shines from the ceiling illuminating a stone stair case in front of you. Painted on the walls are images that you cannot describe.",
+        "You have been in darkness far too long the light is so inviting");
+        
         // initialise room exits
-
         entrance.setExit("north", mid1);
-
+        
+        
         mid1.setExit("north", mid2);
         mid1.setExit("east", right1);
-
+        
         mid2.setExit("north", mid3);
         mid2.setExit("west", left2);
         mid2.setExit("south",mid1);
-
+        
         mid3.setExit("north", mid4);
         mid3.setExit("south",mid2);
-
+        mid3.setExit("east",right3);
+        
         mid4.setExit("south", mid3);
+        
 
         left1.setExit("north", left2);
+        
 
         left2.setExit("east", mid2);
         left2.setExit("north", left3);
         left2.setExit("south",left1);
-
+        
         left3.setExit("south", left2);
         left3.setExit("west", portalLeft);
-
+        
         portalLeft.setExit("portal", farRight2);
         portalLeft.setExit("east", left3);
-
+        
+        
         right1.setExit("west", mid1);
         right1.setExit("east", farRight1);
-
+        
         right2.setExit("north", right3);
         right2.setExit("east", farRight2);
-
+        
         right3.setExit("west", mid3);
         right3.setExit("south", right2);
-
+        
         farRight1.setExit("west", right1);
-
+        
         farRight2.setExit("west", right2);
         farRight2.setExit("north", exit);
+
 
         exit.setExit("north", exit);
         currentRoom = entrance;  // start game at entrance
@@ -160,6 +167,9 @@ public class Game
         if (commandWord.equals("help")) 
         {
             printHelp();
+        }
+        else if(commandWord.equals("inspect")){
+            System.out.println(currentRoom.getHint());
         }
         else if (commandWord.equals("go")) 
         {
