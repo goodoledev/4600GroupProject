@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class Room 
 {
     private String description;
+    private String hint;
     private HashMap<String, Room> exits;        // stores exits of this room.
 
     /**
@@ -26,9 +27,10 @@ public class Room
      * "an open court yard".
      * @param description The room's description.
      */
-    public Room(String description) 
+    public Room(String description, String hint) 
     {
         this.description = description;
+        this.hint = hint;
         exits = new HashMap<String, Room>();
     }
 
@@ -59,7 +61,16 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        return  description + ".\n" + getExitString();
+    }
+    
+    /**
+    *Return a hint of the room that leads to the proper exit
+    @return the hint provided by each room
+    */
+    public String getHint()
+    {
+     return hint;   
     }
 
     /**
