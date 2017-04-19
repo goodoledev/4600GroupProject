@@ -60,7 +60,6 @@ public class Game
         "You have been in darkness far too long the light is so inviting");
         
         // initialise room exits
-        
         entrance.setExit("north", mid1);
         
         
@@ -108,7 +107,6 @@ public class Game
 
 
         exit.setExit("north", exit);
-
         currentRoom = entrance;  // start game at entrance
     }
 
@@ -140,6 +138,7 @@ public class Game
         System.out.println("Welcome to the DEATH OF THE CATACOMBS");
         System.out.println("Find your way out. You are given a lamp to travel to different parts of the Catacombs.");
         System.out.println("For every room you enter, you use a bar of your fuel level. You must escape before your fuel bar is exhausted.");
+        System.out.println("Each room contains clues to help you on your journey. Type 'inspect' to gain information about your surrounding."); 
         System.out.println("Listen to the hints carefully and choose your faith wisely!");
         System.out.println("One wrong turn can lead you to death!");
         System.out.println("Your main objective is to venture off and find the exit. GOOD LUCK!!");
