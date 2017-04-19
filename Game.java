@@ -19,7 +19,8 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-        
+    public int fuelBar; 
+    
     /**
      * Create the game and initialise its internal map.
      */
@@ -34,30 +35,72 @@ public class Game
      */
     private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
-      
-        // create the rooms
-        outside = new Room("outside the main entrance of the university");
-        theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
-        office = new Room("in the computing admin office");
+        Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
         
+        // create the rooms
+        entrance = new Room("in the entrance to a poorly lit cavern");
+        left1 = new Room("left to the entrance");
+        left2 = new Room("north of left 1");
+        left3 = new Room("north of left 2");
+        portalLeft = new Room("You hear a strange humming noise");
+        mid1 = new Room("north of the entrance");
+        mid2 = new Room("north of mid1");
+        mid3 = new Room("north of mid2");
+        mid4 = new Room("north of mid3");
+
+        right1 = new Room("in a lecture theater");
+        right2 = new Room("in the campus pub");
+        right3 = new Room("in a computing lab");
+
+        farRight1 = new Room("in the computing admin office");
+        farRight2 = new Room("north of farRight1");
+
+        exit = new Room("Finally the exit");
+
         // initialise room exits
-        outside.setExit("east", theater);
-        outside.setExit("south", lab);
-        outside.setExit("west", pub);
 
-        theater.setExit("west", outside);
+        entrance.setExit("north", mid1);
 
-        pub.setExit("east", outside);
+        mid1.setExit("north", mid2);
+        mid1.setExit("east", right1);
 
-        lab.setExit("north", outside);
-        lab.setExit("east", office);
+        mid2.setExit("north", mid3);
+        mid2.setExit("west", left2);
+        mid2.setExit("south",mid1);
 
-        office.setExit("west", lab);
+        mid3.setExit("north", mid4);
+        mid3.setExit("south",mid2);
 
-        currentRoom = outside;  // start game outside
+        mid4.setExit("south", mid3);
+
+        left1.setExit("north", left2);
+
+        left2.setExit("east", mid2);
+        left2.setExit("north", left3);
+        left2.setExit("south",left1);
+
+        left3.setExit("south", left2);
+        left3.setExit("west", portalLeft);
+
+        portalLeft.setExit("portal", farRight2);
+        portalLeft.setExit("east", left3);
+
+        right1.setExit("west", mid1);
+        right1.setExit("east", farRight1);
+
+        right2.setExit("north", right3);
+        right2.setExit("east", farRight2);
+
+        right3.setExit("west", mid3);
+        right3.setExit("south", right2);
+
+        farRight1.setExit("west", right1);
+
+        farRight2.setExit("west", right2);
+        farRight2.setExit("north", exit);
+
+        exit.setExit("north", exit);
+        currentRoom = entrance;  // start game at entrance
     }
 
     /**
@@ -65,13 +108,14 @@ public class Game
      */
     public void play() 
     {            
+        fuelBar = 110;
         printWelcome();
-
+        
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
-                
+
         boolean finished = false;
-        while (! finished) {
+        while (!finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
         }
@@ -84,9 +128,14 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the World of Zuul!");
-        System.out.println("World of Zuul is a new, incredibly boring adventure game.");
-        System.out.println("Type 'help' if you need help.");
+        System.out.println("Welcome to the DEATH OF THE CATACOMBS");
+        System.out.println("Find your way out. You are given a lamp to travel to different parts of the Catacombs.");
+        System.out.println("For every room you enter, you use a bar of your fuel level. You must escape before your fuel bar is exhausted.");
+        System.out.println("Listen to the hints carefully and choose your faith wisely!");
+        System.out.println("One wrong turn can lead you to death!");
+        System.out.println("Your main objective is to venture off and find the exit. GOOD LUCK!!");
+        System.out.println("Type in 'go' along with the direction you want to go to play, 'help' for a list of commands,");
+        System.out.println("or 'quit' to end the game...");
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
     }
@@ -100,19 +149,23 @@ public class Game
     {
         boolean wantToQuit = false;
 
-        if(command.isUnknown()) {
+        if(command.isUnknown()) 
+        {
             System.out.println("I don't know what you mean...");
             return false;
         }
 
-        String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
+        String commandWord = command.getCommandWord().toLowerCase();
+        if (commandWord.equals("help")) 
+        {
             printHelp();
         }
-        else if (commandWord.equals("go")) {
+        else if (commandWord.equals("go")) 
+        {
             goRoom(command);
         }
-        else if (commandWord.equals("quit")) {
+        else if (commandWord.equals("quit")) 
+        {
             wantToQuit = quit(command);
         }
         // else command not recognised.
@@ -128,11 +181,13 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You are a eager thrill seeker and somehow ended up in the Death of Catacombs. You need to find your way out.");
         System.out.println();
-        System.out.println("Your command words are:");
+        System.out.println("Your command words are: ");
         parser.showCommands();
+        System.out.println();
+        System.out.println("Command words are limited based on your room location.");
+        System.out.println("Best of Luck!!!");
     }
 
     /** 
@@ -143,21 +198,30 @@ public class Game
     {
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
-            System.out.println("Go where?");
-            return;
-        }
+            System.out.println("Please enter north or east?");
 
-        String direction = command.getSecondWord();
+        }  
 
+        String direction = command.getSecondWord().toLowerCase();
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
-
+        
+        
         if (nextRoom == null) {
             System.out.println("There is no door!");
         }
         else {
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
+            fuelBar=fuelBar - 10;
+            System.out.println("Fuel Bar Level: " + fuelBar);
+            if (fuelBar == 0)
+            {
+                System.out.println("Your lamp has run out of fuel and the room is pitch dark!!!");
+                System.out.println("There's no hope for you to find the exit and you've been consumed by the dead...");
+                System.out.println("GAME OVER!!!!!");
+                System.exit(69);
+            }
         }
     }
 
