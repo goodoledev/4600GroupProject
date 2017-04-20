@@ -1,3 +1,6 @@
+
+import java.io.File;
+import javax.sound.sampled.*;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -28,8 +31,21 @@ public class Game
     {
         createRooms();
         parser = new Parser();
+        runAudio();
     }
-
+ public void runAudio()
+ +    {
+ +        try{
+ +        AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
+ +        Clip clip = AudioSystem.getClip();
+ +        clip.open(inputStream);
+ +        clip.loop(Clip.LOOP_CONTINUOUSLY);
+ +        Thread.sleep(10000);
+ +    }
+ +    catch(Exception e)
+ +    {
+ +        System.out.println(e);
+ +    }
     /**
      * Create all the rooms and link their exits together.
      */
