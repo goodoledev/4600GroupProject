@@ -1,4 +1,6 @@
 
+
+
 import java.io.File;
 import javax.sound.sampled.*;
 /**
@@ -23,6 +25,7 @@ public class Game
     private Room currentRoom;
     private Room exit;
     public int fuelBar; 
+        
 
     /**
      * Create the game and initialise its internal map.
@@ -47,6 +50,20 @@ public class Game
         {
             System.out.println(e);
         }
+      
+    public void runAudio()
+    {
+        try{
+        AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
+        Clip clip = AudioSystem.getClip();
+        clip.open(inputStream);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        Thread.sleep(10000);
+    }
+    catch(Exception e)
+    {
+        System.out.println(e);
+    }
     }
 
     /**
@@ -54,8 +71,8 @@ public class Game
      */
     private void createRooms()
     {
-        Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
-
+       Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
+              
         // create the rooms
         entrance = new Room("You find yourself at the entrance to to a poorly lit cavern.","Enter the dungeon, true Adventure awaits!");
         left1 = new Room("A roaring blaze blocks your path!","The flame illuminates the path from which you came.");
@@ -66,59 +83,62 @@ public class Game
         mid2 = new Room("BATS rush in and swarm you! 2 doors are outlined in the distance, make a decision quickly!","Strange noises flood in from the West.");
         mid3 = new Room("Eerie silence deafens you... ","You notice a strange mural of a Sun to the east. When you move closer to the mural sounds of water come from the North");
         mid4 = new Room("Water flows in from the ceiling into a small underground creek.","You seem to have found a dead end. What went wrong? Try retracing your steps");
-
         right1 = new Room("There's a sad subtle crying noise nearby...","Do you wish to follow the noise? Choose wisely...");
         right2 = new Room("You see a trail of Egyptian Scarab Beetles swarming over the remains of an adventurer on the east side of the wall","The Egyptian considered these beetles lucky, do you wish to follow the trail?");
         right3 = new Room("An intense cold blankets the room, you feel your breath catch in your chest. In the corner a dark figure catches your eye...","Fear seems to empower the figure, but faint barking of what sounds like an old friend echo from the southern side of the room...");
-
         farRight1 = new Room("There's a little girl crying in the corner of the room...","There's blood flowing down her eyes as she yells TURN BACK!!!");
         farRight2 = new Room("You find yourself in a place dark, but you feel invigorated. Nothing can stop you now.",
-            "Faint markings on the north wall depict an image of a phoenix rising from the ashes. What does it mean?");
-
-        exit = new Room("Light shines from the ceiling illuminating a stone stair case in front of you. Painted on the walls are images that you cannot describe.",
-            "You have been in darkness far too long the light is so inviting");
-
+        "Faint markings on the north wall depict an image of a phoenix rising from the ashes. What does it mean?");
+        
+        exit = new Room("Light shines from the ceiling illuminating a stone stair case and exit front of you. Painted on the walls are images that you cannot describe.",
+        "You have been in darkness far too long the light is so inviting");
+        
         // initialise room exits
         entrance.setExit("north", mid1);
-
+        
+        
         mid1.setExit("north", mid2);
         mid1.setExit("east", right1);
-
+        
         mid2.setExit("north", mid3);
         mid2.setExit("west", left2);
         mid2.setExit("south",mid1);
-
+        
         mid3.setExit("north", mid4);
         mid3.setExit("south",mid2);
         mid3.setExit("east",right3);
-
+      
         mid4.setExit("south", mid3);
+        
 
         left1.setExit("north", left2);
+        
 
         left2.setExit("east", mid2);
         left2.setExit("north", left3);
         left2.setExit("south",left1);
-
+        
         left3.setExit("south", left2);
         left3.setExit("west", portalLeft);
-
+        
         portalLeft.setExit("portal", farRight2);
         portalLeft.setExit("east", left3);
-
+        
+        
         right1.setExit("west", mid1);
         right1.setExit("east", farRight1);
-
+        
         right2.setExit("north", right3);
         right2.setExit("east", farRight2);
-
+        
         right3.setExit("west", mid3);
         right3.setExit("south", right2);
-
+        
         farRight1.setExit("west", right1);
-
+        
         farRight2.setExit("west", right2);
         farRight2.setExit("north", exit);
+
 
         exit.setExit("north", exit);
         currentRoom = entrance;  // start game at entrance
@@ -132,13 +152,18 @@ public class Game
         fuelBar = 110;
         printWelcome();
 
+
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
-
+                
         boolean finished = false;
-        while (!finished) {
+        while (! finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
+            if(currentRoom.getShortDescription().contains("exit"))
+            {finished = true;
+            System.out.println("Congratulations you succesfully found your way out!");
+            }
         }
         System.out.println("Thank you for playing.  Good bye.");
     }
@@ -171,15 +196,13 @@ public class Game
     {
         boolean wantToQuit = false;
 
-        if(command.isUnknown()) 
-        {
+        if(command.isUnknown()) {
             System.out.println("I don't know what you mean...");
             return false;
         }
 
-        String commandWord = command.getCommandWord().toLowerCase();
-        if (commandWord.equals("help")) 
-        {
+        String commandWord = command.getCommandWord();
+        if (commandWord.equals("help")) {
             printHelp();
         }
         else if(commandWord.equals("inspect")){
@@ -189,8 +212,7 @@ public class Game
         {
             goRoom(command);
         }
-        else if (commandWord.equals("quit")) 
-        {
+        else if (commandWord.equals("quit")) {
             wantToQuit = quit(command);
         }
         // else command not recognised.
@@ -206,13 +228,11 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are a eager thrill seeker and somehow ended up in the Death of Catacombs. You need to find your way out.");
+        System.out.println("You are lost. You are alone. You wander");
+        System.out.println("around at the university.");
         System.out.println();
-        System.out.println("Your command words are: ");
+        System.out.println("Your command words are:");
         parser.showCommands();
-        System.out.println();
-        System.out.println("Command words are limited based on your room location.");
-        System.out.println("Best of Luck!!!");
     }
 
     /** 
@@ -225,13 +245,15 @@ public class Game
             // if there is no second word, we don't know where to go...
             System.out.println("Please enter 'go' with the direction of the exit you want to travel.");
 
-        }  
+            System.out.println("Go where?");
+            return;
+        }
 
-        String direction = command.getSecondWord().toLowerCase();
+        String direction = command.getSecondWord();
+
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
-        
-        
+
         if (nextRoom == null) {
             System.out.println("There is no door!");
         }
@@ -248,6 +270,7 @@ public class Game
                 System.out.println("GAME OVER!!!!!");
                 System.exit(0);
             }
+
 
         }
         
