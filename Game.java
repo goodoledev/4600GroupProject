@@ -1,8 +1,12 @@
+
+import java.io.File;
+import javax.sound.sampled.*;
 /**
- *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
- *  to make it more interesting!
+ *  This class is the main class of the "World of Zuul" application, which is used as a base. 
+ *  "The Death of Catacombs" is a text based adventure game. There is a maze in which
+ *  you have to find the exit. The player is given hints throughout the game to help them guide the exit.
+ *  Be careful making decisions because you use up a fuel bar every time you enter a different room.
+ *  If your fuel bar is exhausted to zero, then the game is over and you lose.
  * 
  *  To play this game, create an instance of this class and call the "play"
  *  method.
@@ -11,16 +15,15 @@
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2011.08.08
  */
 
 public class Game 
 {
     private Parser parser;
     private Room currentRoom;
+    private Room exit;
     public int fuelBar; 
-    
+
     /**
      * Create the game and initialise its internal map.
      */
@@ -28,6 +31,22 @@ public class Game
     {
         createRooms();
         parser = new Parser();
+        runAudio();
+    }
+
+    public void runAudio()
+    {
+        try{
+            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
+            Clip clip = AudioSystem.getClip();
+            clip.open(inputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+            Thread.sleep(10000);
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
     }
 
     /**
@@ -36,29 +55,30 @@ public class Game
     private void createRooms()
     {
         Room entrance,left1,left2,left3,portalLeft, mid1, mid2, mid3, mid4, right1, right2, right3, farRight1, farRight2, exit;
-        
+
         // create the rooms
-        entrance = new Room("in the entrance to a poorly lit cavern");
-        left1 = new Room("left to the entrance");
-        left2 = new Room("north of left 1");
-        left3 = new Room("north of left 2");
-        portalLeft = new Room("You hear a strange humming noise");
-        mid1 = new Room("north of the entrance");
-        mid2 = new Room("north of mid1");
-        mid3 = new Room("north of mid2");
-        mid4 = new Room("north of mid3");
+        entrance = new Room("You find yourself at the entrance to to a poorly lit cavern.","Enter the dungeon, true Adventure awaits!");
+        left1 = new Room("A roaring blaze blocks your path!","The flame illuminates the path from which you came.");
+        left2 = new Room("A skeleton lies on the floor, fear grips you. Tread carefully.", "You notice the skeleton seems like he was trying to travel North...");
+        left3 = new Room("Beautiful mounds of gold flash before your eyes! You step closer and then everything vanishes...","Fools have perished here, you can feel it. But something urges you to press on...");
+        portalLeft = new Room("You hear a strange humming noise and what looks to be a portal. Where does it lead?","A voice tells you, 'do not confuse the fear of the unknown with the fear of change...'");
+        mid1 = new Room("Darkness washes over you.","Do not fear, moving forward will lead to progress.");
+        mid2 = new Room("BATS rush in and swarm you! 2 doors are outlined in the distance, make a decision quickly!","Strange noises flood in from the West.");
+        mid3 = new Room("Eerie silence deafens you... ","You notice a strange mural of a Sun to the east. When you move closer to the mural sounds of water come from the North");
+        mid4 = new Room("Water flows in from the ceiling into a small underground creek.","You seem to have found a dead end. What went wrong? Try retracing your steps");
 
-        right1 = new Room("in a lecture theater");
-        right2 = new Room("in the campus pub");
-        right3 = new Room("in a computing lab");
+        right1 = new Room("There's a sad subtle crying noise nearby...","Do you wish to follow the noise? Choose wisely...");
+        right2 = new Room("You see a trail of Egyptian Scarab Beetles swarming over the remains of an adventurer on the east side of the wall","The Egyptian considered these beetles lucky, do you wish to follow the trail?");
+        right3 = new Room("An intense cold blankets the room, you feel your breath catch in your chest. In the corner a dark figure catches your eye...","Fear seems to empower the figure, but faint barking of what sounds like an old friend echo from the southern side of the room...");
 
-        farRight1 = new Room("in the computing admin office");
-        farRight2 = new Room("north of farRight1");
+        farRight1 = new Room("There's a little girl crying in the corner of the room...","There's blood flowing down her eyes as she yells TURN BACK!!!");
+        farRight2 = new Room("You find yourself in a place dark, but you feel invigorated. Nothing can stop you now.",
+            "Faint markings on the north wall depict an image of a phoenix rising from the ashes. What does it mean?");
 
-        exit = new Room("Finally the exit");
+        exit = new Room("Light shines from the ceiling illuminating a stone stair case in front of you. Painted on the walls are images that you cannot describe.",
+            "You have been in darkness far too long the light is so inviting");
 
         // initialise room exits
-
         entrance.setExit("north", mid1);
 
         mid1.setExit("north", mid2);
@@ -70,6 +90,7 @@ public class Game
 
         mid3.setExit("north", mid4);
         mid3.setExit("south",mid2);
+        mid3.setExit("east",right3);
 
         mid4.setExit("south", mid3);
 
@@ -101,8 +122,8 @@ public class Game
 
         exit.setExit("north", exit);
         currentRoom = entrance;  // start game at entrance
-    }
 
+    }
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -110,7 +131,7 @@ public class Game
     {            
         fuelBar = 110;
         printWelcome();
-        
+
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
 
@@ -128,7 +149,7 @@ public class Game
     private void printWelcome()
     {
         System.out.println();
-        System.out.println("Welcome to the DEATH OF THE CATACOMBS");
+        System.out.println("Welcome to The DEATH OF THE CATACOMBS");
         System.out.println("Find your way out. You are given a lamp to travel to different parts of the Catacombs.");
         System.out.println("For every room you enter, you use a bar of your fuel level. You must escape before your fuel bar is exhausted.");
         System.out.println("Each room contains clues to help you on your journey. Type 'inspect' to gain information about your surrounding."); 
@@ -160,6 +181,9 @@ public class Game
         if (commandWord.equals("help")) 
         {
             printHelp();
+        }
+        else if(commandWord.equals("inspect")){
+            System.out.println(currentRoom.getHint());
         }
         else if (commandWord.equals("go")) 
         {
@@ -199,7 +223,7 @@ public class Game
     {
         if(!command.hasSecondWord()) {
             // if there is no second word, we don't know where to go...
-            System.out.println("Please enter north or east?");
+            System.out.println("Please enter 'go' with the direction of the exit you want to travel.");
 
         }  
 
@@ -213,6 +237,7 @@ public class Game
         }
         else {
             currentRoom = nextRoom;
+           
             System.out.println(currentRoom.getLongDescription());
             fuelBar=fuelBar - 10;
             System.out.println("Fuel Bar Level: " + fuelBar);
@@ -221,9 +246,12 @@ public class Game
                 System.out.println("Your lamp has run out of fuel and the room is pitch dark!!!");
                 System.out.println("There's no hope for you to find the exit and you've been consumed by the dead...");
                 System.out.println("GAME OVER!!!!!");
-                System.exit(69);
+                System.exit(0);
             }
+
         }
+        
+        boolean location == true;
     }
 
     /** 
@@ -233,11 +261,13 @@ public class Game
      */
     private boolean quit(Command command) 
     {
-        if(command.hasSecondWord()) {
+        if(command.hasSecondWord())
+        {
             System.out.println("Quit what?");
             return false;
         }
-        else {
+        else 
+        {
             return true;  // signal that we want to quit
         }
     }
