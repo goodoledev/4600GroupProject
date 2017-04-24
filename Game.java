@@ -25,7 +25,6 @@ public class Game
     private Room currentRoom;
     private Room exit;
     public int fuelBar; 
-        
 
     /**
      * Create the game and initialise its internal map.
@@ -36,36 +35,20 @@ public class Game
         parser = new Parser();
         runAudio();
     }
-
-    public void runAudio()
-    {
-        try{
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
-            Clip clip = AudioSystem.getClip();
-            clip.open(inputStream);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-            Thread.sleep(10000);
-        }
-        catch(Exception e)
-        {
-            System.out.println(e);
-        }
-      
-    public void runAudio()
-    {
-        try{
-        AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
-        Clip clip = AudioSystem.getClip();
-        clip.open(inputStream);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        Thread.sleep(10000);
-    }
-    catch(Exception e)
-    {
-        System.out.println(e);
-    }
-    }
-
+ public void runAudio()
+     {
+         try{
+         AudioInputStream inputStream = AudioSystem.getAudioInputStream(new File("loop.wav"));
+         Clip clip = AudioSystem.getClip();
+         clip.open(inputStream);
+         clip.loop(Clip.LOOP_CONTINUOUSLY);
+         Thread.sleep(10000);
+     }
+     catch(Exception e)
+     {
+         System.out.println(e);
+     }
+ }
     /**
      * Create all the rooms and link their exits together.
      */
@@ -89,8 +72,10 @@ public class Game
         farRight1 = new Room("There's a little girl crying in the corner of the room...","There's blood flowing down her eyes as she yells TURN BACK!!!");
         farRight2 = new Room("You find yourself in a place dark, but you feel invigorated. Nothing can stop you now.",
         "Faint markings on the north wall depict an image of a phoenix rising from the ashes. What does it mean?");
-        
-        exit = new Room("Light shines from the ceiling illuminating a stone stair case and exit front of you. Painted on the walls are images that you cannot describe.",
+      
+        exit = new Room("Light shines from the ceiling illuminating a stone stair case and exit front of you. Painted on the walls are images that you cannot describe."),
+
+  
         "You have been in darkness far too long the light is so inviting");
         
         // initialise room exits
@@ -142,7 +127,6 @@ public class Game
 
         exit.setExit("north", exit);
         currentRoom = entrance;  // start game at entrance
-
     }
     /**
      *  Main play routine.  Loops until end of play.
@@ -151,13 +135,11 @@ public class Game
     {            
         fuelBar = 110;
         printWelcome();
-
-
         // Enter the main command loop.  Here we repeatedly read commands and
         // execute them until the game is over.
-                
+
         boolean finished = false;
-        while (! finished) {
+        while (!finished) {
             Command command = parser.getCommand();
             finished = processCommand(command);
             if(currentRoom.getShortDescription().contains("exit"))
@@ -196,13 +178,15 @@ public class Game
     {
         boolean wantToQuit = false;
 
-        if(command.isUnknown()) {
+        if(command.isUnknown()) 
+        {
             System.out.println("I don't know what you mean...");
             return false;
         }
 
-        String commandWord = command.getCommandWord();
-        if (commandWord.equals("help")) {
+        String commandWord = command.getCommandWord().toLowerCase();
+        if (commandWord.equals("help")) 
+        {
             printHelp();
         }
         else if(commandWord.equals("inspect")){
@@ -212,7 +196,8 @@ public class Game
         {
             goRoom(command);
         }
-        else if (commandWord.equals("quit")) {
+        else if (commandWord.equals("quit")) 
+        {
             wantToQuit = quit(command);
         }
         // else command not recognised.
@@ -228,11 +213,13 @@ public class Game
      */
     private void printHelp() 
     {
-        System.out.println("You are lost. You are alone. You wander");
-        System.out.println("around at the university.");
+        System.out.println("You are a eager thrill seeker and somehow ended up in the Death of Catacombs. You need to find your way out.");
         System.out.println();
-        System.out.println("Your command words are:");
+        System.out.println("Your command words are: ");
         parser.showCommands();
+        System.out.println();
+        System.out.println("Command words are limited based on your room location.");
+        System.out.println("Best of Luck!!!");
     }
 
     /** 
@@ -249,11 +236,13 @@ public class Game
             return;
         }
 
-        String direction = command.getSecondWord();
+        }  
 
+        String direction = command.getSecondWord().toLowerCase();
         // Try to leave current room.
         Room nextRoom = currentRoom.getExit(direction);
-
+        
+        
         if (nextRoom == null) {
             System.out.println("There is no door!");
         }
@@ -270,6 +259,7 @@ public class Game
                 System.out.println("GAME OVER!!!!!");
                 System.exit(0);
             }
+
 
 
         }
